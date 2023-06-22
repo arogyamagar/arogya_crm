@@ -6,8 +6,8 @@ import App from './App.vue'
 import { router } from './router'
 
 Meteor.startup(() => {
-  const app = createApp(App)
-  app.use(router)
-  app.use(VueMeteor)
-  app.mount('#app')
+    const app = createApp(App)
+    app.use(router)
+    app.use(VueMeteor)
+    app.mount('#app')
 })
