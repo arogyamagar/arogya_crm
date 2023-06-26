@@ -4,8 +4,6 @@ import LoginForm from './components/LoginForm.vue'
 import SideBar from './components/SideBar.vue'
 import NotFound from './components/NotFound.vue'
 import Organizations from './components/organization/Organizations.vue'
-import CreateOrganization from './components/organization/CreateOrganization.vue'
-import EditOrganization from './components/organization/EditOrganization.vue'
 import Dashboard from './components/Dashboard.vue'
 import Users from './components/users/Users.vue'
 import Tags from './components/tags/Tags.vue'
@@ -31,11 +29,6 @@ export const router = createRouter({
                     path: '/organization',
                     name: 'Organization',
                     component: Organizations,
-                },
-                {
-                    path: '/organization/create',
-                    name: 'CreateOrganization',
-                    component: CreateOrganization,
                 },
                 {
                     path: '/users',
