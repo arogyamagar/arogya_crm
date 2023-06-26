@@ -8,9 +8,10 @@ Meteor.methods({
             createdAt: new Date(),
         })
     },
-    'tags.remove'({ tagId, tagName }) {
+    'tags.remove'({ tagId }) {
         const user = Meteor.user()
         if (
+            user.profile.role !== 'keelaAdmin' &&
             user.profile.role !== 'Admin' &&
             user.profile.role !== 'coordinator'
         ) {

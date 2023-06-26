@@ -27,12 +27,20 @@ Meteor.methods({
         }
         OrganizationsCollection.remove(organizationId)
     },
-    'organizations.update'(organizationId, newOrganizationDetails) {
-        check(organizationId, String)
-        const user = Meteor.user()
-        if (user.profile.role !== 'keelaAdmin') {
-            return Meteor.Error('Operation Not Authorized')
-        }
-        OrganizationsCollection.update(organizationId, newOrganizationDetails)
+    getOrganization(organizationId) {
+        // Perform any necessary validation and authorization checks
+        return OrganizationsCollection.findOne(organizationId)
+    },
+
+    updateOrganization(organization) {
+        // Perform any necessary validation and authorization checks
+        OrganizationsCollection.update(organization._id, {
+            $set: {
+                name: organization.name,
+                email: organization.email,
+                address: organization.address,
+                phone: organization.phone,
+            },
+        })
     },
 })

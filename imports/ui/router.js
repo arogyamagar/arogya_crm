@@ -38,11 +38,6 @@ export const router = createRouter({
                     component: CreateOrganization,
                 },
                 {
-                    path: '/organization/:id/edit',
-                    name: 'EditOrganization',
-                    component: EditOrganization,
-                },
-                {
                     path: '/users',
                     name: 'Users',
                     component: Users,
