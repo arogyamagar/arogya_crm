@@ -176,7 +176,7 @@ export default {
         },
         async handleSubmit() {
             try {
-                await Meteor.call('tags.insert', {
+                await Meteor.call('tags.create', {
                     name: this.name,
                     userId: this.currentUser._id,
                 })

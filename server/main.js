@@ -7,24 +7,48 @@ import { TagsCollection } from '../imports/api/collection/TagsCollection'
 
 // Methods
 import '../imports/api/methods/TagsMethods'
+import '../imports/api/methods/UserMethods'
 import '../imports/api/methods/OrganizationMethods'
 
 // Publications
 import '../imports/api/publications/OrganizationPublication'
 import '../imports/api/publications/TagsPublications'
+import '../imports/api/publications/UserPublication'
+
+import { roles } from '../imports/api/decleration/roles'
 
 const KEELA_ADMIN_USERNAME = 'keelaAdmin'
 const ADMIN_USERNAME = 'admin'
-const COORDINATOR_USERNAME = 'cordinator'
+const COORDINATOR_USERNAME = 'coordinator'
 const PASSWORD = 'password'
 
+// const insertOrgnization = (organization) => {
+//     OrganizationsCollection.insert({ ...organization })
+// }
+
 Meteor.startup(async () => {
+    // if (OrganizationsCollection.find().count() === 0) {
+    //     ;[
+    //         {
+    //             name: 'myOrganization',
+    //             email: 'myorgqanization@keela.com',
+    //             address: 'myAddress',
+    //             phone: '9898989898',
+    //             createdAt: new Date(),
+    //         },
+    //     ].forEach(insertOrgnization)
+    // }
+    // const myOrganizationId = OrganizationsCollection.findOne({
+    //     name: 'myOrganization',
+    // })
     if (!Accounts.findUserByUsername(KEELA_ADMIN_USERNAME)) {
         Accounts.createUser({
             username: KEELA_ADMIN_USERNAME,
             password: PASSWORD,
             profile: {
-                role: 'keelaAdmin',
+                role: roles.keelaAdmin,
+                // organizationId: myOrganizationId._id,
+                // organizationName: 'myOrganization',
             },
         })
     }
@@ -34,7 +58,9 @@ Meteor.startup(async () => {
             username: ADMIN_USERNAME,
             password: PASSWORD,
             profile: {
-                role: 'admin',
+                role: roles.admin,
+                // organizationId: myOrganizationId._id,
+                // organizationName: 'myOrganization',
             },
         })
     }
@@ -44,7 +70,9 @@ Meteor.startup(async () => {
             username: COORDINATOR_USERNAME,
             password: PASSWORD,
             profile: {
-                role: 'coordinator',
+                role: roles.coordinator,
+                // organizationId: myOrganizationId._id,
+                // organizationName: 'myOrganization',
             },
         })
     }

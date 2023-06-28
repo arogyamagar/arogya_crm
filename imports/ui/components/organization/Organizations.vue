@@ -234,7 +234,7 @@ export default {
         },
         async handleSubmit() {
             try {
-                await Meteor.call('organizations.insert', {
+                await Meteor.call('organizations.create', {
                     name: this.name,
                     email: this.email,
                     address: this.address,

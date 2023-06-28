@@ -1,46 +1,39 @@
 import { check } from 'meteor/check'
 import { OrganizationsCollection } from '../collection/OrganizationsCollection'
 import { Meteor } from 'meteor/meteor'
+import { permission } from '../decleration/permission'
+import { checkUserRole } from '../checks/checkUserRoles'
 
 Meteor.methods({
-    'organizations.insert'(organizationDetails) {
-        const user = Meteor.user()
-        if (user.profile.role !== 'keelaAdmin') {
-            return Meteor.Error('Operation Not Authorized')
+    'organizations.create'(organizationDetails) {
+        const currentUser = Meteor.user()
+        check(organizationDetails, Object)
+        if (!organizationDetails) {
+            throw new Meteor.Error('No organization found.')
         }
-        OrganizationsCollection.insert({
-            ...organizationDetails,
-            createdAt: new Date(),
-        })
+        if (checkUserRole(permission.CREATE_ORGANIZATION)) {
+            if (currentUser)
+                OrganizationsCollection.insert({
+                    ...organizationDetails,
+                    createdAt: new Date(),
+                })
+        } else {
+            throw new Meteor.Error('Operation Not Authorized')
+        }
     },
+
     'organizations.remove'(organizationId) {
         check(organizationId, String)
-        const user = Meteor.user()
-        if (user.profile.role !== 'keelaAdmin') {
-            return Meteor.Error('Operation Not Authorized')
-        }
         const organization = OrganizationsCollection.findOne({
             _id: organizationId,
         })
         if (!organization) {
             Meteor.Error("Organization doesn't exist")
         }
-        OrganizationsCollection.remove(organizationId)
-    },
-    getOrganization(organizationId) {
-        // Perform any necessary validation and authorization checks
-        return OrganizationsCollection.findOne(organizationId)
-    },
-
-    updateOrganization(organization) {
-        // Perform any necessary validation and authorization checks
-        OrganizationsCollection.update(organization._id, {
-            $set: {
-                name: organization.name,
-                email: organization.email,
-                address: organization.address,
-                phone: organization.phone,
-            },
-        })
+        if (checkUserRole(permission.REMOVE_ORGANIZATION)) {
+            OrganizationsCollection.remove(organizationId)
+        } else {
+            return Meteor.Error('Operation Not Authorized')
+        }
     },
 })
