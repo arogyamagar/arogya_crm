@@ -4,6 +4,7 @@ import LoginForm from './components/LoginForm.vue'
 import SideBar from './components/SideBar.vue'
 import NotFound from './components/NotFound.vue'
 import Organizations from './components/organization/Organizations.vue'
+import Contacts from './components/contact/Contacts.vue'
 import Dashboard from './components/Dashboard.vue'
 import Users from './components/users/Users.vue'
 import Tags from './components/tags/Tags.vue'
@@ -39,6 +40,11 @@ export const router = createRouter({
                     path: '/tags',
                     name: 'Tags',
                     component: Tags,
+                },
+                {
+                    path: '/contacts',
+                    name: 'Contacts',
+                    component: Contacts,
                 },
             ],
         },

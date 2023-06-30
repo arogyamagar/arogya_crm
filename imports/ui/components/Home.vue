@@ -67,7 +67,9 @@ export default {
         SideBar,
     },
     data() {
-        return {}
+        return {
+            currentUser: Meteor.user(),
+        }
     },
     meteor: {
         Organizations() {

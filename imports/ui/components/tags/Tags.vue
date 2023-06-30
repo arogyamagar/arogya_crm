@@ -61,7 +61,7 @@
                                 >Tag Name</label
                             >
                             <input
-                                v-model="name"
+                                v-model="doc.name"
                                 type="text"
                                 name="name"
                                 id="name"
@@ -74,7 +74,7 @@
                             type="submit"
                             class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                            Create Tag
+                            {{ mode === 'add' ? 'Create Tag' : 'Update Tag' }}
                         </button>
                     </form>
                 </div>
@@ -113,6 +113,7 @@
                         <td>
                             <button
                                 type="button"
+                                @click="openEditModal(tag)"
                                 class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                             >
                                 Edit
@@ -145,12 +146,16 @@
 import { Meteor } from 'meteor/meteor'
 import { TagsCollection } from '../../../api/collection/TagsCollection'
 
+const tagData = {
+    name: '',
+}
 export default {
     tags: 'Tags',
     data() {
         return {
+            mode: 'add',
             showModal: false,
-            name: '',
+            doc: { ...tagData },
         }
     },
     meteor: {
@@ -166,20 +171,34 @@ export default {
     },
     methods: {
         openModal() {
+            this.mode = 'add'
             this.showModal = true
+        },
+        openEditModal(tagData) {
+            this.mode = 'edit'
+            this.showModal = true
+            this.doc = { ...tagData }
         },
         closeModal() {
             this.showModal = false
+            this.doc = { ...tagData }
         },
         deleteTag(tagId) {
             Meteor.call('tags.remove', tagId)
         },
         async handleSubmit() {
             try {
-                await Meteor.call('tags.create', {
-                    name: this.name,
-                    userId: this.currentUser._id,
-                })
+                if (this.mode === 'add') {
+                    await Meteor.call('tags.create', {
+                        ...this.doc,
+                        userId: this.currentUser._id,
+                    })
+                } else if (this.mode === 'edit') {
+                    await Meteor.call('tags.edit', {
+                        ...this.doc,
+                        userId: this.currentUser._id,
+                    })
+                }
             } catch (error) {
                 alert(error.message)
             }

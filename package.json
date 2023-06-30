@@ -16,6 +16,7 @@
     "vue": "^3.2.45",
     "vue-js-modal": "^2.0.1",
     "vue-meteor-tracker": "^3.0.0-beta.7",
+    "vue-multiselect": "^3.0.0-beta.2",
     "vue-router": "^4.1.6",
     "vuex": "^4.1.0"
   },

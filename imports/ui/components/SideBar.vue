@@ -28,7 +28,7 @@
                         <span class="ml-3">Dashboard</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="orgCreateAccess || orgViewAccess">
                     <router-link
                         to="/organization"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -50,7 +50,7 @@
                     </router-link>
                 </li>
 
-                <li>
+                <li v-if="userCreateAccess || userViewAccess">
                     <router-link
                         to="/users"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -71,7 +71,7 @@
                         <span class="flex-1 ml-3 whitespace-nowrap">Users</span>
                     </router-link>
                 </li>
-                <li>
+                <li v-if="tagCreateAccess || tagViewAccess">
                     <router-link
                         to="/tags"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -92,13 +92,135 @@
                         <span class="flex-1 ml-3 whitespace-nowrap">Tags</span>
                     </router-link>
                 </li>
+                <li v-if="contactCreateAccess || contactViewAccess">
+                    <router-link
+                        to="/contacts"
+                        class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                        <svg
+                            aria-hidden="true"
+                            class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z"
+                                clip-rule="evenodd"
+                            ></path>
+                        </svg>
+
+                        <span class="flex-1 ml-3 whitespace-nowrap"
+                            >Contacts</span
+                        >
+                    </router-link>
+                </li>
             </ul>
         </div>
     </aside>
 </template>
 
 <script>
+import { checkUserRole } from '../../api/checks/checkUserRoles'
+import { permission } from '../../api/decleration/permission'
+import { OrganizationsCollection } from '../../api/collection/OrganizationsCollection'
+import { TagsCollection } from '../../api/collection/TagsCollection'
+import { ContactsCollection } from '../../api/collection/ContactsCollection'
+
 export default {
     name: 'SideBar',
+    meteor: {
+        $subscribe: {
+            organizations: [],
+            tags: [],
+            contacts: [],
+            users: [],
+            //   tasks: [],
+        },
+        currentUser() {
+            return Meteor.user()
+        },
+    },
+    computed: {
+        orgCreateAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.CREATE_ORGANIZATION, this.currentUser)
+            )
+        },
+        orgViewAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.VIEW_ORGANIZATION, this.currentUser)
+            )
+        },
+        tagCreateAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.CREATE_TAG, this.currentUser)
+            )
+        },
+        tagViewAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.VIEW_TAG, this.currentUser)
+            )
+        },
+        contactCreateAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.CREATE_CONTACT, this.currentUser)
+            )
+        },
+        contactViewAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.VIEW_CONTACT, this.currentUser)
+            )
+        },
+        userCreateAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.CREATE_USER, this.currentUser)
+            )
+        },
+        userViewAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.VIEW_USER, this.currentUser)
+            )
+        },
+        organizations() {
+            if (!this.currentUser) {
+                return []
+            }
+            const organizations = OrganizationsCollection.find({}).fetch()
+            return organizations
+        },
+        users() {
+            if (!this.currentUser) {
+                return []
+            }
+            const users = Meteor.users.find({}).fetch()
+            return users
+        },
+        tags() {
+            if (!this.currentUser) {
+                return []
+            }
+
+            const tags = TagsCollection.find({}).fetch()
+            return tags
+        },
+        contacts() {
+            if (!this.currentUser) {
+                return []
+            }
+
+            const contacts = ContactsCollection.find({}).fetch()
+            return contacts
+        },
+    },
 }
 </script>

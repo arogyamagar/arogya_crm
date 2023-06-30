@@ -36,4 +36,18 @@ Meteor.methods({
             return Meteor.Error('Operation Not Authorized')
         }
     },
+    'tags.edit'(tag) {
+        const { _id, name } = tag
+        if (checkUserRole(permission.EDIT_TAG)) {
+            TagsCollection.update(_id, {
+                $set: {
+                    name: name,
+                    modifiedBy: this.userId,
+                    modifiedAt: new Date(),
+                },
+            })
+        } else {
+            throw new Meteor.Error('Operation Not authorized.')
+        }
+    },
 })

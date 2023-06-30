@@ -61,7 +61,7 @@
                                 >Organization Name</label
                             >
                             <input
-                                v-model="name"
+                                v-model="doc.name"
                                 type="text"
                                 name="name"
                                 id="name"
@@ -77,7 +77,7 @@
                                 >Organization Email</label
                             >
                             <input
-                                v-model="email"
+                                v-model="doc.email"
                                 type="email"
                                 name="email"
                                 id="email"
@@ -93,7 +93,7 @@
                                 >Tag Name</label
                             >
                             <input
-                                v-model="address"
+                                v-model="doc.address"
                                 type="text"
                                 name="address"
                                 id="address"
@@ -109,7 +109,7 @@
                                 >Organization Phone</label
                             >
                             <input
-                                v-model="phone"
+                                v-model="doc.phone"
                                 type="number"
                                 name="phone"
                                 id="phone"
@@ -122,7 +122,11 @@
                             type="submit"
                             class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                            Create Organization
+                            {{
+                                mode === 'add'
+                                    ? 'Create Organization'
+                                    : 'Update Organization'
+                            }}
                         </button>
                     </form>
                 </div>
@@ -142,8 +146,6 @@
                     <tr>
                         <th scope="col" class="px-6 py-3">Organization Name</th>
                         <th scope="col" class="px-6 py-3">Email</th>
-                        <th scope="col" class="px-6 py-3">Address</th>
-                        <th scope="col" class="px-6 py-3">Phone</th>
                         <th scope="col" class="px-6 py-3">Action</th>
                     </tr>
                 </thead>
@@ -160,11 +162,10 @@
                             {{ organization.name }}
                         </th>
                         <td class="px-6 py-4">{{ organization.email }}</td>
-                        <td class="px-6 py-4">{{ organization.address }}</td>
-                        <td class="px-6 py-4">{{ organization.phone }}</td>
                         <td>
                             <button
                                 type="button"
+                                @click="openEditModal(organization)"
                                 class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                             >
                                 Edit
@@ -197,15 +198,19 @@
 import { Meteor } from 'meteor/meteor'
 import { OrganizationsCollection } from '../../../api/collection/OrganizationsCollection'
 
+const organizationData = {
+    name: '',
+    email: '',
+    address: '',
+    phone: '',
+}
 export default {
     name: 'Organizations',
     data() {
         return {
+            mode: 'add',
             showModal: false,
-            name: '',
-            email: '',
-            address: '',
-            phone: '',
+            doc: { ...organizationData },
         }
     },
     meteor: {
@@ -224,23 +229,34 @@ export default {
     },
     methods: {
         openModal() {
+            this.mode = 'add'
             this.showModal = true
+        },
+        openEditModal(organizationData) {
+            this.mode = 'edit'
+            this.showModal = true
+            this.doc = { ...organizationData }
         },
         closeModal() {
             this.showModal = false
+            this.doc = { ...organizationData }
         },
         deleteOrganization(organizationId) {
             Meteor.call('organizations.remove', organizationId)
         },
         async handleSubmit() {
             try {
-                await Meteor.call('organizations.create', {
-                    name: this.name,
-                    email: this.email,
-                    address: this.address,
-                    phone: this.phone,
-                    userId: this.currentUser._id,
-                })
+                if (this.mode === 'add') {
+                    await Meteor.call('organizations.create', {
+                        ...this.doc,
+                        userId: this.currentUser._id,
+                    })
+                } else if (this.mode === 'edit') {
+                    await Meteor.call('organizations.edit', {
+                        ...this.doc,
+                        userId: this.currentUser._id,
+                    })
+                }
             } catch (error) {
                 alert(error.message)
             }

@@ -36,4 +36,18 @@ Meteor.methods({
             return Meteor.Error('Operation Not Authorized')
         }
     },
+
+    'organizations.edit'(organization) {
+        if (checkUserRole(permission.EDIT_ORGANIZATION)) {
+            OrganizationsCollection.update(organization._id, {
+                $set: {
+                    ...organization,
+                    modifiedBy: this.userId,
+                    modifiedAt: new Date(),
+                },
+            })
+        } else {
+            throw new Meteor.Error('Operation Not authorized.')
+        }
+    },
 })
