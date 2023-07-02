@@ -122,24 +122,14 @@
 </template>
 
 <script>
-import { checkUserRole } from '../../api/checks/checkUserRoles'
-import { permission } from '../../api/decleration/permission'
-import { OrganizationsCollection } from '../../api/collection/OrganizationsCollection'
-import { TagsCollection } from '../../api/collection/TagsCollection'
-import { ContactsCollection } from '../../api/collection/ContactsCollection'
+import { checkUserRole } from '../../api/checks/checkUserRoles';
+import { permission } from '../../api/decleration/permission';
 
 export default {
     name: 'SideBar',
     meteor: {
-        $subscribe: {
-            organizations: [],
-            tags: [],
-            contacts: [],
-            users: [],
-            //   tasks: [],
-        },
         currentUser() {
-            return Meteor.user()
+            return Meteor.user();
         },
     },
     computed: {
@@ -147,80 +137,50 @@ export default {
             return (
                 this.currentUser &&
                 checkUserRole(permission.CREATE_ORGANIZATION, this.currentUser)
-            )
+            );
         },
         orgViewAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.VIEW_ORGANIZATION, this.currentUser)
-            )
+            );
         },
         tagCreateAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.CREATE_TAG, this.currentUser)
-            )
+            );
         },
         tagViewAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.VIEW_TAG, this.currentUser)
-            )
+            );
         },
         contactCreateAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.CREATE_CONTACT, this.currentUser)
-            )
+            );
         },
         contactViewAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.VIEW_CONTACT, this.currentUser)
-            )
+            );
         },
         userCreateAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.CREATE_USER, this.currentUser)
-            )
+            );
         },
         userViewAccess() {
             return (
                 this.currentUser &&
                 checkUserRole(permission.VIEW_USER, this.currentUser)
-            )
-        },
-        organizations() {
-            if (!this.currentUser) {
-                return []
-            }
-            const organizations = OrganizationsCollection.find({}).fetch()
-            return organizations
-        },
-        users() {
-            if (!this.currentUser) {
-                return []
-            }
-            const users = Meteor.users.find({}).fetch()
-            return users
-        },
-        tags() {
-            if (!this.currentUser) {
-                return []
-            }
-
-            const tags = TagsCollection.find({}).fetch()
-            return tags
-        },
-        contacts() {
-            if (!this.currentUser) {
-                return []
-            }
-
-            const contacts = ContactsCollection.find({}).fetch()
-            return contacts
+            );
         },
     },
-}
+};
 </script>

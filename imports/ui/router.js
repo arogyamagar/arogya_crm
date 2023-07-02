@@ -1,13 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from './components/Home.vue'
-import LoginForm from './components/LoginForm.vue'
-import SideBar from './components/SideBar.vue'
-import NotFound from './components/NotFound.vue'
-import Organizations from './components/organization/Organizations.vue'
-import Contacts from './components/contact/Contacts.vue'
-import Dashboard from './components/Dashboard.vue'
-import Users from './components/users/Users.vue'
-import Tags from './components/tags/Tags.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from './components/Home.vue';
+import LoginForm from './components/LoginForm.vue';
+import NotFound from './components/NotFound.vue';
+import Organizations from './components/organization/Organizations.vue';
+import Contacts from './components/contact/Contacts.vue';
+import Dashboard from './components/Dashboard.vue';
+import Users from './components/users/Users.vue';
+import Tags from './components/tags/Tags.vue';
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -15,11 +14,9 @@ export const router = createRouter({
         {
             path: '/',
             name: 'Home',
-            components: {
-                default: Home,
-                sideBar: SideBar,
-            },
+            component: Home,
             meta: { requiresAuth: true },
+            redirect: '/',
             children: [
                 {
                     path: '/',
@@ -59,12 +56,12 @@ export const router = createRouter({
             component: NotFound,
         },
     ],
-})
+});
 
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !Meteor.userId()) {
-        next('/login')
+        next('/login');
     } else {
-        next()
+        next();
     }
-})
+});

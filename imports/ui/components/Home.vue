@@ -36,6 +36,9 @@
                     </a>
                 </div>
                 <div class="flex items-center">
+                    <div class="mr-3 text-md font-semibold">
+                        {{ currentUser?.username }}
+                    </div>
                     <div class="flex md:order-2" v-on:click="logout">
                         <button
                             type="button"
@@ -56,33 +59,49 @@
             <router-view />
         </div>
     </div>
+
+    <footer
+        class="fixed bottom-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+    >
+        <div
+            class="flex justify-center w-full max-w-screen-3xl p-4 md:flex md:items-center md:justify-center"
+        >
+            <span
+                class="text-sm font-semibold text-gray-500 sm:text-center dark:text-gray-400"
+                >© 2023
+                <a href="https://keela.co/" class="hover:underline">Keela</a>.
+                All Rights Reserved.
+            </span>
+        </div>
+    </footer>
 </template>
 
 <script>
-import { OrganizationsCollection } from '../../api/collection/OrganizationsCollection'
-import SideBar from './SideBar.vue'
+import { OrganizationsCollection } from '../../api/collection/OrganizationsCollection';
+import SideBar from './SideBar.vue';
 export default {
     name: 'Home',
     components: {
         SideBar,
     },
     data() {
-        return {
-            currentUser: Meteor.user(),
-        }
+        return {};
     },
     meteor: {
         Organizations() {
-            return OrganizationsCollection.find({}).fetch()
+            return OrganizationsCollection.find({}).fetch();
+        },
+        currentUser() {
+            return Meteor.user();
         },
     },
     methods: {
         logout() {
-            Meteor.logout()
-            this.$router.push({ name: 'LoginForm' })
+            Meteor.logout();
+            this.$router.push({ name: 'LoginForm' });
         },
     },
-}
+};
 </script>
 
 <style lang="scss" scoped></style>

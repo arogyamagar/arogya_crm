@@ -6,9 +6,9 @@
 export default {
     name: 'Dashboard',
     data() {
-        return {}
+        return {};
     },
     meteor: {},
     methods: {},
-}
+};
 </script>

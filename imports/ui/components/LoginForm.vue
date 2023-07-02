@@ -1,4 +1,6 @@
 <template>
+    <Alert ref="alertsComponent" :message="alertMessage" :type="alertType" />
+
     <div class="flex items-center justify-center h-screen">
         <div
             class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
@@ -55,26 +57,42 @@
 </template>
 
 <script>
-import { Meteor } from 'meteor/meteor'
+import { Meteor } from 'meteor/meteor';
+import Alert from './Alerts.vue';
 
 export default {
+    components: {
+        Alert,
+    },
     name: 'LoginForm',
     data() {
         return {
             username: '',
             password: '',
-        }
+            alertType: '',
+            alertMessage: '',
+        };
     },
     methods: {
+        showAlerts(type, message) {
+            this.alertType = type;
+            this.alertMessage = message;
+            this.$refs.alertsComponent.showAlertMessage();
+        },
         handleSubmit() {
             Meteor.loginWithPassword(this.username, this.password, (error) => {
                 if (error) {
-                    console.log(error)
+                    this.showAlerts(
+                        'error',
+                        'Error! Check you username and password'
+                    );
+                    console.log(error);
                 } else {
-                    this.$router.push({ name: 'Home' })
+                    this.$router.push({ name: 'Home' });
+                    this.showAlerts('success', 'Logged in Successfully');
                 }
-            })
+            });
         },
     },
-}
+};
 </script>

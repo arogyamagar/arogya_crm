@@ -5,31 +5,31 @@
 </template>
 
 <script>
-import { Meteor } from 'meteor/meteor'
-import { Tracker } from 'meteor/tracker'
+import { Meteor } from 'meteor/meteor';
+import { Tracker } from 'meteor/tracker';
 
-import { onMounted } from 'vue'
-import { initFlowbite } from 'flowbite'
+import { onMounted } from 'vue';
+import { initFlowbite } from 'flowbite';
 
 // initialize components based on data attribute selectors
 
 export default {
     setup() {
         onMounted(() => {
-            initFlowbite()
-        })
+            initFlowbite();
+        });
     },
     meteor: {},
     data() {
         return {
             user: null,
-        }
+        };
     },
     created() {
         Tracker.autorun(() => {
-            this.user = Meteor.user()
-        })
+            this.user = Meteor.user();
+        });
     },
     methods: {},
-}
+};
 </script>

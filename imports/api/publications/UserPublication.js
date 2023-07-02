@@ -1,5 +1,5 @@
-import { Meteor } from 'meteor/meteor'
+import { Meteor } from 'meteor/meteor';
 
 Meteor.publish('users', function publishUser() {
-    return Meteor.users.find({})
-})
+    return Meteor.users.find({});
+});

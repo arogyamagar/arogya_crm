@@ -1,4 +1,6 @@
 <template>
+    <Alert ref="alertsComponent" :message="alertMessage" :type="alertType" />
+
     <div
         class="p-4 border-2 border-gray-200 border-spacing-0 rounded-lg dark:border-gray-700 mt-[15px]"
     >
@@ -6,6 +8,7 @@
             <!-- Modal toggle -->
             <div class="text-xl font-semibold">Organizations</div>
             <button
+                v-if="organizationCreateAccess"
                 @click="openModal"
                 class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button"
@@ -51,7 +54,11 @@
                     <h3
                         class="mb-4 text-xl font-medium text-gray-900 dark:text-white"
                     >
-                        Enter Organization Details
+                        {{
+                            mode === 'add'
+                                ? 'Enter Organization Details'
+                                : 'Update Organization Details'
+                        }}
                     </h3>
                     <form class="space-y-6" @submit.prevent="handleSubmit">
                         <div>
@@ -134,6 +141,7 @@
         </div>
     </div>
     <div
+        v-if="organizationViewAccess"
         class="p-4 border-2 border-gray-200 border-spacing-0 rounded-lg dark:border-gray-700 mt-[15px]"
     >
         <div class="relative overflow-x-auto">
@@ -146,7 +154,15 @@
                     <tr>
                         <th scope="col" class="px-6 py-3">Organization Name</th>
                         <th scope="col" class="px-6 py-3">Email</th>
-                        <th scope="col" class="px-6 py-3">Action</th>
+                        <th scope="col" class="px-6 py-3">Address</th>
+                        <th scope="col" class="px-6 py-3">Phone</th>
+                        <th
+                            v-if="orgDeleteAccess && orgEditAccess"
+                            scope="col"
+                            class="px-6 py-3"
+                        >
+                            Action
+                        </th>
                     </tr>
                 </thead>
                 <tbody v-if="this.organizations.length > 0">
@@ -162,8 +178,11 @@
                             {{ organization.name }}
                         </th>
                         <td class="px-6 py-4">{{ organization.email }}</td>
+                        <td class="px-6 py-4">{{ organization.address }}</td>
+                        <td class="px-6 py-4">{{ organization.phone }}</td>
                         <td>
                             <button
+                                v-if="orgEditAccess"
                                 type="button"
                                 @click="openEditModal(organization)"
                                 class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -171,6 +190,7 @@
                                 Edit
                             </button>
                             <button
+                                v-if="orgDeleteAccess"
                                 type="button"
                                 @click="deleteOrganization(organization._id)"
                                 class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
@@ -192,30 +212,70 @@
             </table>
         </div>
     </div>
+    <div
+        v-else
+        class="p-4 border-2 border-gray-200 border-spacing-0 rounded-lg dark:border-gray-700 mt-[15px]"
+    >
+        Sorry, Not Authorized
+    </div>
 </template>
 
 <script>
-import { Meteor } from 'meteor/meteor'
-import { OrganizationsCollection } from '../../../api/collection/OrganizationsCollection'
+import { Meteor } from 'meteor/meteor';
+import { OrganizationsCollection } from '../../../api/collection/OrganizationsCollection';
+import { checkUserRole } from '../../../api/checks/checkUserRoles';
+import { permission } from '../../../api/decleration/permission';
+import Alert from '../Alerts.vue';
 
 const organizationData = {
     name: '',
     email: '',
     address: '',
     phone: '',
-}
+};
 export default {
+    components: {
+        Alert,
+    },
     name: 'Organizations',
     data() {
         return {
             mode: 'add',
             showModal: false,
             doc: { ...organizationData },
-        }
+            alertType: '',
+            alertMessage: '',
+        };
+    },
+    computed: {
+        organizationCreateAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.CREATE_ORGANIZATION, this.currentUser)
+            );
+        },
+        organizationViewAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.VIEW_ORGANIZATION, this.currentUser)
+            );
+        },
+        orgEditAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.EDIT_ORGANIZATION, this.currentUser)
+            );
+        },
+        orgDeleteAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.REMOVE_ORGANIZATION, this.currentUser)
+            );
+        },
     },
     meteor: {
         currentUser() {
-            return Meteor.user()
+            return Meteor.user();
         },
         $subscribe: {
             organizations: [],
@@ -224,44 +284,68 @@ export default {
             return OrganizationsCollection.find(
                 {},
                 { sort: { createdAt: -1 } }
-            ).fetch()
+            ).fetch();
         },
     },
     methods: {
+        showAlerts(type, message) {
+            this.alertType = type;
+            this.alertMessage = message;
+            this.$refs.alertsComponent.showAlertMessage();
+        },
         openModal() {
-            this.mode = 'add'
-            this.showModal = true
+            this.mode = 'add';
+            this.showModal = true;
         },
         openEditModal(organizationData) {
-            this.mode = 'edit'
-            this.showModal = true
-            this.doc = { ...organizationData }
+            this.mode = 'edit';
+            this.showModal = true;
+            this.doc = { ...organizationData };
         },
         closeModal() {
-            this.showModal = false
-            this.doc = { ...organizationData }
+            this.showModal = false;
+            this.doc = { ...organizationData };
         },
         deleteOrganization(organizationId) {
-            Meteor.call('organizations.remove', organizationId)
+            Meteor.call('organizations.remove', organizationId);
+            this.showAlerts('error', 'Organization Deleted Successfully');
         },
         async handleSubmit() {
             try {
+                const existingOrganization = OrganizationsCollection.findOne({
+                    email: this.doc.email,
+                });
+                if (existingOrganization) {
+                    this.showAlerts(
+                        'error',
+                        'An Organization with the Same Email Already Exists.'
+                    );
+                    return;
+                }
                 if (this.mode === 'add') {
                     await Meteor.call('organizations.create', {
                         ...this.doc,
                         userId: this.currentUser._id,
-                    })
+                    });
+                    this.showAlerts(
+                        'success',
+                        'Organization Created Successfully'
+                    );
                 } else if (this.mode === 'edit') {
                     await Meteor.call('organizations.edit', {
                         ...this.doc,
                         userId: this.currentUser._id,
-                    })
+                    });
+                    this.showAlerts(
+                        'success',
+                        'Organization Updated Successfully'
+                    );
                 }
             } catch (error) {
-                alert(error.message)
+                alert(error.message);
             }
-            this.closeModal()
+            this.closeModal();
         },
     },
-}
+};
 </script>

@@ -1,4 +1,6 @@
 <template>
+    <Alert ref="alertsComponent" :message="alertMessage" :type="alertType" />
+
     <div
         class="p-4 border-2 border-gray-200 border-spacing-0 rounded-lg dark:border-gray-700 mt-[15px]"
     >
@@ -6,6 +8,7 @@
             <!-- Modal toggle -->
             <div class="text-xl font-semibold">Tags</div>
             <button
+                v-if="tagsCreateAccess"
                 @click="openModal"
                 class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button"
@@ -51,7 +54,11 @@
                     <h3
                         class="mb-4 text-xl font-medium text-gray-900 dark:text-white"
                     >
-                        Enter Tag Details
+                        {{
+                            mode === 'add'
+                                ? 'Enter Tag Details'
+                                : 'Update Tag Details'
+                        }}
                     </h3>
                     <form class="space-y-6" @submit.prevent="handleSubmit">
                         <div>
@@ -82,6 +89,7 @@
         </div>
     </div>
     <div
+        v-if="tagsViewAccess"
         class="p-4 border-2 border-gray-200 border-spacing-0 rounded-lg dark:border-gray-700 mt-[15px]"
     >
         <div class="relative overflow-x-auto">
@@ -94,7 +102,13 @@
                     <tr>
                         <th scope="col" class="px-6 py-3">Tag Name</th>
                         <th scope="col" class="px-6 py-3">Created</th>
-                        <th scope="col" class="px-6 py-3">Action</th>
+                        <th
+                            v-if="tagsDeleteAccess && tagsEditAccess"
+                            scope="col"
+                            class="px-6 py-3"
+                        >
+                            Action
+                        </th>
                     </tr>
                 </thead>
                 <tbody v-if="this.tags.length > 0">
@@ -112,6 +126,7 @@
                         <td class="px-6 py-4">{{ tag.createdAt }}</td>
                         <td>
                             <button
+                                v-if="tagsEditAccess"
                                 type="button"
                                 @click="openEditModal(tag)"
                                 class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -119,6 +134,7 @@
                                 Edit
                             </button>
                             <button
+                                v-if="tagsDeleteAccess"
                                 type="button"
                                 @click="deleteTag(tag._id)"
                                 class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
@@ -140,70 +156,126 @@
             </table>
         </div>
     </div>
+    <div
+        v-else
+        class="p-4 border-2 border-gray-200 border-spacing-0 rounded-lg dark:border-gray-700 mt-[15px]"
+    >
+        Sorry, Not Authorized
+    </div>
 </template>
 
 <script>
-import { Meteor } from 'meteor/meteor'
-import { TagsCollection } from '../../../api/collection/TagsCollection'
+import { Meteor } from 'meteor/meteor';
+import { TagsCollection } from '../../../api/collection/TagsCollection';
+import { checkUserRole } from '../../../api/checks/checkUserRoles';
+import { permission } from '../../../api/decleration/permission';
+import Alert from '../Alerts.vue';
 
 const tagData = {
     name: '',
-}
+};
 export default {
+    components: {
+        Alert,
+    },
     tags: 'Tags',
     data() {
         return {
             mode: 'add',
             showModal: false,
             doc: { ...tagData },
-        }
+            alertType: '',
+            alertMessage: '',
+        };
+    },
+    computed: {
+        tagsCreateAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.CREATE_TAG, this.currentUser)
+            );
+        },
+        tagsViewAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.VIEW_TAG, this.currentUser)
+            );
+        },
+        tagsEditAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.EDIT_TAG, this.currentUser)
+            );
+        },
+        tagsDeleteAccess() {
+            return (
+                this.currentUser &&
+                checkUserRole(permission.REMOVE_TAG, this.currentUser)
+            );
+        },
     },
     meteor: {
         currentUser() {
-            return Meteor.user()
+            return Meteor.user();
         },
         $subscribe: {
             tags: [],
         },
         tags() {
-            return TagsCollection.find({}, { sort: { createdAt: -1 } }).fetch()
+            return TagsCollection.find({}, { sort: { createdAt: -1 } }).fetch();
         },
     },
     methods: {
+        showAlerts(type, message) {
+            this.alertType = type;
+            this.alertMessage = message;
+            this.$refs.alertsComponent.showAlertMessage();
+        },
         openModal() {
-            this.mode = 'add'
-            this.showModal = true
+            this.mode = 'add';
+            this.showModal = true;
         },
         openEditModal(tagData) {
-            this.mode = 'edit'
-            this.showModal = true
-            this.doc = { ...tagData }
+            this.mode = 'edit';
+            this.showModal = true;
+            this.doc = { ...tagData };
         },
         closeModal() {
-            this.showModal = false
-            this.doc = { ...tagData }
+            this.showModal = false;
+            this.doc = { ...tagData };
         },
         deleteTag(tagId) {
-            Meteor.call('tags.remove', tagId)
+            Meteor.call('tags.remove', tagId);
+            this.showAlerts('error', 'Tag Deleted Successfully');
         },
         async handleSubmit() {
             try {
+                const existingTag = TagsCollection.findOne({
+                    name: this.doc.name,
+                });
+
+                if (existingTag) {
+                    this.showAlerts('error', 'Tag Already Exists');
+                    return;
+                }
                 if (this.mode === 'add') {
                     await Meteor.call('tags.create', {
                         ...this.doc,
                         userId: this.currentUser._id,
-                    })
+                    });
+                    this.showAlerts('success', 'Tag Created Successfully');
                 } else if (this.mode === 'edit') {
                     await Meteor.call('tags.edit', {
                         ...this.doc,
                         userId: this.currentUser._id,
-                    })
+                    });
+                    this.showAlerts('success', 'Tag Updated Successfully');
                 }
             } catch (error) {
-                alert(error.message)
+                alert(error.message);
             }
-            this.closeModal()
+            this.closeModal();
         },
     },
-}
+};
 </script>
