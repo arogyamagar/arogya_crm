@@ -43,6 +43,10 @@ Meteor.methods({
                     $set: {
                         username: user.updates.username,
                         'profile.role': user.updates['profile.role'],
+                        'profile.organizationId':
+                            user.updates['profile.organizationId'],
+                        'profile.organizationName':
+                            user.updates['profile.organizationName'],
                     },
                 }
             );

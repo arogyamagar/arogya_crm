@@ -312,17 +312,18 @@ export default {
         },
         async handleSubmit() {
             try {
-                const existingOrganization = OrganizationsCollection.findOne({
-                    email: this.doc.email,
-                });
-                if (existingOrganization) {
-                    this.showAlerts(
-                        'error',
-                        'An Organization with the Same Email Already Exists.'
-                    );
-                    return;
-                }
                 if (this.mode === 'add') {
+                    const existingOrganization =
+                        OrganizationsCollection.findOne({
+                            email: this.doc.email,
+                        });
+                    if (existingOrganization) {
+                        this.showAlerts(
+                            'error',
+                            'An Organization with the Same Email Already Exists.'
+                        );
+                        return;
+                    }
                     await Meteor.call('organizations.create', {
                         ...this.doc,
                         userId: this.currentUser._id,

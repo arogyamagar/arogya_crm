@@ -250,15 +250,15 @@ export default {
         },
         async handleSubmit() {
             try {
-                const existingTag = TagsCollection.findOne({
-                    name: this.doc.name,
-                });
-
-                if (existingTag) {
-                    this.showAlerts('error', 'Tag Already Exists');
-                    return;
-                }
                 if (this.mode === 'add') {
+                    const existingTag = TagsCollection.findOne({
+                        name: this.doc.name,
+                    });
+
+                    if (existingTag) {
+                        this.showAlerts('error', 'Tag Already Exists');
+                        return;
+                    }
                     await Meteor.call('tags.create', {
                         ...this.doc,
                         userId: this.currentUser._id,

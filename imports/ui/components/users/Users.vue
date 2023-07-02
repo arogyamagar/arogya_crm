@@ -117,7 +117,7 @@
                             </select>
                         </div>
 
-                        <div v-if="mode == 'add'">
+                        <div>
                             <label
                                 for="organization"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -256,7 +256,7 @@ export default {
             showModal: false,
             doc: { ...userData },
             roles: roles,
-            selectedOrganization: {},
+            selectedOrganization: '',
             selectedRole: '',
             alertType: '',
             alertMessage: '',
@@ -321,12 +321,15 @@ export default {
             this.showModal = true;
             this.doc = { ...userData };
             this.selectedRole = userData.profile.role;
+            const organizationId = userData.profile.organizationId;
+            this.selectedOrganization =
+                OrganizationsCollection.findOne(organizationId);
         },
         closeModal() {
             this.showModal = false;
             this.doc = { ...userData };
             this.roles = roles;
-            this.selectedOrganization = {};
+            this.selectedOrganization = '';
         },
         deleteUser(userId) {
             Meteor.call('users.remove', userId);
@@ -334,17 +337,17 @@ export default {
         },
         async handleSubmit() {
             try {
-                const existingUser = Meteor.users.findOne({
-                    username: this.doc.username,
-                });
-                if (existingUser) {
-                    // Duplicate user found, show an error message
-                    this.alertType = 'error';
-                    this.alertMessage = 'Username already exists';
-                    this.$refs.alertsComponent.showAlertMessage();
-                    return;
-                }
                 if (this.mode === 'add') {
+                    const existingUser = Meteor.users.findOne({
+                        username: this.doc.username,
+                    });
+                    if (existingUser) {
+                        // Duplicate user found, show an error message
+                        this.alertType = 'error';
+                        this.alertMessage = 'Username already exists';
+                        this.$refs.alertsComponent.showAlertMessage();
+                        return;
+                    }
                     await Meteor.call('users.create', {
                         ...this.doc,
                         profile: {
@@ -360,6 +363,10 @@ export default {
                         updates: {
                             username: this.doc.username,
                             'profile.role': this.selectedRole,
+                            'profile.organizationId':
+                                this.selectedOrganization._id,
+                            'profile.organizationName':
+                                this.selectedOrganization.name,
                         },
                     });
                     this.showAlerts('success', 'User Updated Successfully');

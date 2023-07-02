@@ -322,17 +322,17 @@ export default {
         },
         async handleSubmit() {
             try {
-                const existingContact = ContactsCollection.findOne({
-                    email: this.doc.email,
-                });
-                if (existingContact) {
-                    this.showAlerts(
-                        'error',
-                        'An Contact with the Same Email Already Exists.'
-                    );
-                    return;
-                }
                 if (this.mode === 'add') {
+                    const existingContact = ContactsCollection.findOne({
+                        email: this.doc.email,
+                    });
+                    if (existingContact) {
+                        this.showAlerts(
+                            'error',
+                            'An Contact with the Same Email Already Exists.'
+                        );
+                        return;
+                    }
                     await Meteor.call('contacts.create', {
                         ...this.doc,
                         tags: this.selectedTags,
