@@ -109,7 +109,7 @@
                                 required
                             />
                         </div>
-                        <div v-if="mode == 'add'">
+                        <div>
                             <label
                                 for="tags"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -122,7 +122,7 @@
                                 :close-on-select="true"
                                 placeholder="Select Tags"
                                 label="name"
-                                track-by="name"
+                                track-by="_id"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                         </div>
@@ -304,12 +304,13 @@ export default {
             this.showModal = true;
         },
         openEditModal(contactData) {
-            const contact = ContactsCollection.findOne(contactData._id);
             this.mode = 'edit';
             this.showModal = true;
             this.doc = { ...contactData };
-            this.selectedTags = contact.tags.map((tags) => tags.name);
-            console.log('selectedTags:', this.selectedTags);
+            const contact = ContactsCollection.findOne(contactData._id);
+            this.selectedTags = contact.tags.map((tagId) => {
+                return TagsCollection.findOne(tagId);
+            });
         },
         closeModal() {
             this.showModal = false;
@@ -335,7 +336,7 @@ export default {
                     }
                     await Meteor.call('contacts.create', {
                         ...this.doc,
-                        tags: this.selectedTags,
+                        tags: this.selectedTags.map((tag) => tag._id),
                         userId: this.currentUser._id,
                         organizationId: this.currentUser.profile.organizationId,
                     });
@@ -343,7 +344,9 @@ export default {
                 } else if (this.mode === 'edit') {
                     await Meteor.call('contacts.edit', {
                         ...this.doc,
+                        tags: this.selectedTags.map((tag) => tag._id),
                         userId: this.currentUser._id,
+                        userName: this.currentUser.name,
                         organizationId: this.currentUser.profile.organizationId,
                     });
                     this.showAlerts('success', 'Contact Updated Successfully');

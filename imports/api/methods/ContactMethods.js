@@ -37,13 +37,14 @@ Meteor.methods({
         }
     },
     'contacts.edit'(contact) {
-        const { _id, name, email, phone } = contact;
+        const { _id, name, email, phone, tags } = contact;
         if (checkUserRole(permission.EDIT_CONTACT)) {
             ContactsCollection.update(_id, {
                 $set: {
                     name: name,
                     email: email,
                     phone: phone,
+                    tags: tags,
                     modifiedBy: this.userId,
                     modifiedAt: new Date(),
                 },
