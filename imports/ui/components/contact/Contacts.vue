@@ -123,6 +123,7 @@
                                 placeholder="Select Tags"
                                 label="name"
                                 track-by="_id"
+                                @remove="handleTagRemove"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                         </div>
@@ -298,6 +299,14 @@ export default {
             this.alertType = type;
             this.alertMessage = message;
             this.$refs.alertsComponent.showAlertMessage();
+        },
+        handleTagRemove(removedTag) {
+            const index = this.selectedTags.findIndex(
+                (tag) => tag._id === removedTag._id
+            );
+            if (index !== -1) {
+                this.selectedTags.splice(index, 1);
+            }
         },
         openModal() {
             this.mode = 'add';
