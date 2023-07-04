@@ -27,6 +27,9 @@
         },
         "testModule": "tests/main.js"
     },
+    "engines": {
+        "meteor": "2.4.1"
+    },
     "devDependencies": {
         "@types/meteor": "^2.8.1",
         "@vitejs/plugin-vue": "^3.2.0",
