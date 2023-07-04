@@ -3,7 +3,7 @@ services:
       env:
           - key: NODE_ENV
             value: production
-      buildCommand: meteor npm install && meteor build ../output/vue --directory
+      buildCommand: npm install && build ../output/vue --directory
       startCommand: cd ../output/vue/bundle/programs/server && npm install --production && node main.js
       routes:
           - path: /
