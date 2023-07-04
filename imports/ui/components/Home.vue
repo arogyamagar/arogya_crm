@@ -98,6 +98,7 @@ export default {
     methods: {
         logout() {
             Meteor.logout();
+            window.location.reload();
             this.$router.push({ name: 'LoginForm' });
         },
     },

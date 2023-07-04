@@ -332,6 +332,10 @@ export default {
             this.selectedOrganization = '';
         },
         deleteUser(userId) {
+            if (userId === this.currentUser._id) {
+                this.showAlerts('error', 'You cannot delete yourself');
+                return;
+            }
             Meteor.call('users.remove', userId);
             this.showAlerts('error', 'User Deleted Successfully');
         },

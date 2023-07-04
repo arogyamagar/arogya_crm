@@ -1,0 +1,4 @@
+services:
+    - name: my-app
+      buildCommand: meteor build --directory /path/to/build && cd /path/to/build && npm run build
+      startCommand: node /path/to/build/main.js

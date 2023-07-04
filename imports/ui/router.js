@@ -49,6 +49,7 @@ export const router = createRouter({
             path: '/login',
             name: 'LoginForm',
             component: LoginForm,
+            meta: { requiresAuth: false },
         },
         {
             path: '/:pathMatch(.*)*',
@@ -61,6 +62,8 @@ export const router = createRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !Meteor.userId()) {
         next('/login');
+    } else if (to.meta.requiresAuth === false && Meteor.userId()) {
+        next('/');
     } else {
         next();
     }

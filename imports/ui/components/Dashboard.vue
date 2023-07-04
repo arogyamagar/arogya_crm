@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+    <div class="grid grid-cols-4 gap-6 sm:grid-cols-2 md:grid-cols-4">
         <div
             class="hover:cursor-pointer max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         >
