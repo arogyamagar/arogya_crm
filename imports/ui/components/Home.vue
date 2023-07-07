@@ -97,9 +97,9 @@ export default {
     },
     methods: {
         logout() {
-            Meteor.logout();
-            window.location.reload();
-            this.$router.push({ name: 'LoginForm' });
+            Meteor.logout(() => {
+                this.$router.push({ name: 'LoginForm' });
+            });
         },
     },
 };

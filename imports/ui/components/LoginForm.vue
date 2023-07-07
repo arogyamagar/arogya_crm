@@ -1,24 +1,31 @@
 <template>
     <Alert ref="alertsComponent" :message="alertMessage" :type="alertType" />
 
-    <div class="flex justify-end mt-2 mr-2">
+    <div class="flex justify-end mt-3 mr-5">
         <!-- Modal toggle -->
         <button
             @click="toggleModal"
             class="block font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             type="button"
         >
-            <svg
-                class="w-6 h-5 text-blue-700 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 14 20"
-            >
-                <path
-                    d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z"
-                />
-            </svg>
+            <div class="flex items-center gap-2">
+                <p>Info</p>
+                <svg
+                    class="w-4 h-4 text-blue-700 hover:text-blue-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 8"
+                >
+                    <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"
+                    />
+                </svg>
+            </div>
         </button>
 
         <!-- Main modal -->
