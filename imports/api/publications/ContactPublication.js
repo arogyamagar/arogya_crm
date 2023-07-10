@@ -1,8 +1,8 @@
-import { Meteor } from 'meteor/meteor'
-import { ContactsCollection } from '../collection/ContactsCollection'
+import { Meteor } from 'meteor/meteor';
+import { ContactsCollection } from '../collection/ContactsCollection';
 
 Meteor.publish('contacts', function publishContacts() {
-    const currentUser = Meteor.user()
+    const currentUser = Meteor.user();
     if (
         currentUser &&
         currentUser.profile &&
@@ -10,7 +10,7 @@ Meteor.publish('contacts', function publishContacts() {
     ) {
         return ContactsCollection.find({
             organizationId: currentUser.profile.organizationId,
-        })
+        });
     }
-    return
-})
+    return;
+});

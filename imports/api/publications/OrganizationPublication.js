@@ -1,6 +1,6 @@
-import { Meteor } from 'meteor/meteor'
-import { OrganizationsCollection } from '../collection/OrganizationsCollection'
+import { Meteor } from 'meteor/meteor';
+import { OrganizationsCollection } from '../collection/OrganizationsCollection';
 
 Meteor.publish('organizations', function publishOrganizations() {
-    return OrganizationsCollection.find({})
-})
+    return OrganizationsCollection.find({});
+});

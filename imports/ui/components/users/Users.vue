@@ -336,8 +336,19 @@ export default {
                 this.showAlerts('error', 'You cannot delete yourself');
                 return;
             }
-            Meteor.call('users.remove', userId);
-            this.showAlerts('error', 'User Deleted Successfully');
+            const userToDelete = Meteor.users.findOne(userId);
+
+            // Check the role hierarchy
+            if (
+                this.currentUser.profile.role === roles.keelaAdmin ||
+                (this.currentUser.profile.role === roles.admin &&
+                    userToDelete.profile.role === roles.coordinator)
+            ) {
+                Meteor.call('users.remove', userId);
+                this.showAlerts('success', 'User Deleted Successfully');
+            } else {
+                this.showAlerts('error', 'Not authorized to delete this user');
+            }
         },
         async handleSubmit() {
             try {
