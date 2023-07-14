@@ -9,6 +9,10 @@
                 <li>
                     <router-link
                         to="/"
+                        :class="{
+                            'bg-gray-100': selectedSidebarItem === 'dashboard',
+                        }"
+                        @click="selectedSidebarItem = 'dashboard'"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <svg
@@ -30,7 +34,12 @@
                 </li>
                 <li v-if="orgCreateAccess || orgViewAccess">
                     <router-link
-                        to="/organization"
+                        to="/organizations"
+                        :class="{
+                            'bg-gray-100':
+                                selectedSidebarItem === 'organizations',
+                        }"
+                        @click="selectedSidebarItem = 'organizations'"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <svg
@@ -54,6 +63,10 @@
                 <li v-if="userCreateAccess || userViewAccess">
                     <router-link
                         to="/users"
+                        :class="{
+                            'bg-gray-100': selectedSidebarItem === 'users',
+                        }"
+                        @click="selectedSidebarItem = 'users'"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <svg
@@ -75,6 +88,10 @@
                 <li v-if="tagCreateAccess || tagViewAccess">
                     <router-link
                         to="/tags"
+                        :class="{
+                            'bg-gray-100': selectedSidebarItem === 'tags',
+                        }"
+                        @click="selectedSidebarItem = 'tags'"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <svg
@@ -98,6 +115,10 @@
                 <li v-if="contactCreateAccess || contactViewAccess">
                     <router-link
                         to="/contacts"
+                        :class="{
+                            'bg-gray-100': selectedSidebarItem === 'contacts',
+                        }"
+                        @click="selectedSidebarItem = 'contacts'"
                         class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <svg
@@ -128,6 +149,14 @@ import { permission } from '../../api/decleration/permission';
 
 export default {
     name: 'SideBar',
+    data() {
+        return {
+            selectedSidebarItem: null,
+        };
+    },
+    created() {
+        this.selectedSidebarItem = 'dashboard';
+    },
     meteor: {
         currentUser() {
             return Meteor.user();

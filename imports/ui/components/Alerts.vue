@@ -28,7 +28,7 @@
             type="button"
             :class="[
                 closeType,
-                'ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 hover:bg-blue-200 inline-flex h-8 w-8 dark:bg-gray-800 dark:hover:bg-gray-700',
+                'ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 hover:bg-indigo-200 inline-flex h-8 w-8 dark:bg-gray-800 dark:hover:bg-gray-700',
             ]"
             data-dismiss-target="#alert-1"
             aria-label="Close"
@@ -74,7 +74,7 @@ export default {
                 case 'error':
                     return 'text-red-800 dark:text-red-400 bg-red-50';
                 default:
-                    return 'text-blue-800 dark:text-blue-400 bg-blue-50';
+                    return 'text-indigo-800 dark:text-indigo-400 bg-indigo-50';
             }
         },
         closeType() {
@@ -86,7 +86,7 @@ export default {
                 case 'error':
                     return 'bg-red-50 text-red-500 focus:ring-red-400 dark:text-red-400';
                 default:
-                    return 'bg-blue-50 text-blue-500 focus:ring-blue-400 dark:text-blue-400';
+                    return 'bg-indigo-50 text-indigo-500 focus:ring-indigo-400 dark:text-indigo-400';
             }
         },
     },

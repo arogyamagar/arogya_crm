@@ -27,13 +27,13 @@
                             ></path>
                         </svg>
                     </button>
-                    <a href="https://keela.co" class="flex ml-2 md:mr-24">
+                    <router-link to="/" class="flex ml-2 md:mr-24">
                         <img
                             src="https://www.keela.co/wp-content/uploads/logo.png"
                             class="h-8 mr-3"
                             alt="Keela Logo"
                         />
-                    </a>
+                    </router-link>
                 </div>
                 <div class="flex items-center">
                     <div class="mr-3 text-md font-semibold">
@@ -42,7 +42,7 @@
                     <div class="flex md:order-2" v-on:click="logout">
                         <button
                             type="button"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0"
+                            class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0"
                         >
                             Logout
                         </button>

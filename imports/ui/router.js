@@ -24,7 +24,7 @@ export const router = createRouter({
                     component: Dashboard,
                 },
                 {
-                    path: '/organization',
+                    path: '/organizations',
                     name: 'Organization',
                     component: Organizations,
                 },
