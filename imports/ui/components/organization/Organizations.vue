@@ -158,7 +158,7 @@
                         <th scope="col" class="px-6 py-3">Phone</th>
                         <th
                             v-if="
-                                organizationDeleteAccess &&
+                                organizationDeleteAccess ||
                                 organizationEditAccess
                             "
                             scope="col"

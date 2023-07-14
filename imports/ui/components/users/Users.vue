@@ -107,13 +107,8 @@
                                 <option value="" disabled selected hidden>
                                     Select Role
                                 </option>
-                                <option
-                                    v-for="role in roles"
-                                    :value="role"
-                                    :key="role"
-                                >
-                                    {{ role }}
-                                </option>
+                                <option value="admin">Admin</option>
+                                <option value="coordinator">Coordinator</option>
                             </select>
                         </div>
 
@@ -169,7 +164,7 @@
                         <th scope="col" class="px-6 py-3">Organization Name</th>
                         <th scope="col" class="px-6 py-3">created At</th>
                         <th
-                            v-if="userDeleteAccess && userEditAccess"
+                            v-if="userDeleteAccess || userEditAccess"
                             scope="col"
                             class="px-6 py-3"
                         >
@@ -255,7 +250,6 @@ export default {
         return {
             showModal: false,
             doc: { ...userData },
-            roles: roles,
             selectedOrganization: '',
             selectedRole: '',
             alertType: '',
@@ -297,13 +291,37 @@ export default {
             organizations: [],
         },
         users() {
-            return Meteor.users.find({}, { sort: { createdAt: -1 } }).fetch();
+            const role = currentUser.profile.role;
+            const organizationId = currentUser.profile.organizationId;
+            if (role === roles.keelaAdmin) {
+                return Meteor.users
+                    .find({}, { sort: { createdAt: -1 } })
+                    .fetch();
+            } else {
+                return Meteor.users
+                    .find(
+                        { 'profile.organizationId': organizationId },
+                        { sort: { createdAt: -1 } }
+                    )
+                    .fetch();
+            }
         },
         organizations() {
-            return OrganizationsCollection.find(
-                {},
-                { sort: { createdAt: -1 } }
-            ).fetch();
+            const organizationId = currentUser.profile.organizationId;
+            const role = currentUser.profile.role;
+            if (role === roles.keelaAdmin) {
+                return OrganizationsCollection.find(
+                    {},
+                    { sort: { createdAt: -1 } }
+                ).fetch();
+            } else {
+                return OrganizationsCollection.find(
+                    {
+                        _id: organizationId,
+                    },
+                    { sort: { createdAt: -1 } }
+                ).fetch();
+            }
         },
     },
     methods: {

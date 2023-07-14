@@ -6,8 +6,8 @@ export const permission = {
     VIEW_ORGANIZATION: [roles.keelaAdmin],
 
     CREATE_USER: [roles.keelaAdmin, roles.admin],
-    REMOVE_USER: [roles.admin],
-    EDIT_USER: [roles.admin],
+    REMOVE_USER: [roles.keelaAdmin, roles.admin],
+    EDIT_USER: [roles.keelaAdmin, roles.admin],
     VIEW_USER: [roles.keelaAdmin, roles.admin],
 
     CREATE_TAG: [roles.admin, roles.coordinator],

@@ -103,7 +103,7 @@
                         <th scope="col" class="px-6 py-3">Tag Name</th>
                         <th scope="col" class="px-6 py-3">Created</th>
                         <th
-                            v-if="tagsDeleteAccess && tagsEditAccess"
+                            v-if="tagsDeleteAccess || tagsEditAccess"
                             scope="col"
                             class="px-6 py-3"
                         >
