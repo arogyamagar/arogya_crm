@@ -291,8 +291,8 @@ export default {
             organizations: [],
         },
         users() {
-            const role = currentUser.profile.role;
-            const organizationId = currentUser.profile.organizationId;
+            const role = Meteor.user().profile.role;
+            const organizationId = Meteor.user().profile.organizationId;
             if (role === roles.keelaAdmin) {
                 return Meteor.users
                     .find({}, { sort: { createdAt: -1 } })
@@ -307,8 +307,8 @@ export default {
             }
         },
         organizations() {
-            const organizationId = currentUser.profile.organizationId;
-            const role = currentUser.profile.role;
+            const organizationId = Meteor.user().profile.organizationId;
+            const role = Meteor.user().profile.role;
             if (role === roles.keelaAdmin) {
                 return OrganizationsCollection.find(
                     {},
